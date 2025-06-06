@@ -1,0 +1,152 @@
+/* src/app/profile/profile-styles.css */
+
+.profile-page-container {
+    @apply max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 pt-[calc(var(--header-height)+1.5rem)] pb-16 min-h-screen;
+}
+
+.profile-header {
+    @apply mb-10 text-center; /* 增加底部间距 */
+}
+
+.profile-title {
+    @apply text-3xl md:text-4xl font-bold text-[var(--theme-primary)] flex items-center justify-center;
+    font-family: var(--font-display);
+}
+
+.icon-趣蓝 { /* 自定义一个颜色类，如果需要的话 */
+    color: var(--theme-secondary); /* 或者您希望的特定颜色 */
+}
+
+.profile-subtitle {
+    @apply text-[var(--theme-text-secondary)] mt-2 text-base; /* 调整了字号和上边距 */
+}
+
+.profile-loading-container {
+    @apply flex flex-col justify-center items-center min-h-[calc(100vh-var(--header-height)-4rem)] pt-[var(--header-height)] text-center;
+}
+
+/* 通用反馈消息样式 */
+.form-feedback {
+    @apply mb-6 p-3.5 border-2 rounded-xl text-sm flex items-center space-x-2.5 shadow-md;
+}
+.error-feedback {
+    @apply bg-red-50 border-red-400 text-red-700;
+    border-left-width: 5px;
+}
+.success-feedback {
+    @apply bg-green-50 border-green-400 text-green-700;
+    border-left-width: 5px;
+}
+
+
+.profile-card {
+    /* REMOVED 'thick-border' from here. It will be applied directly in JSX. */
+    @apply bg-[var(--theme-card-bg)] rounded-2xl p-6 md:p-8 shadow-xl; /* 增加了圆角和内边距 */
+    /* animation: fadeIn 0.5s ease-out; */ /* 可选的淡入动画 */
+}
+
+/* @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+} */
+
+.profile-main-info-grid {
+    @apply flex flex-col md:flex-row items-center md:items-start md:space-x-8 mb-8 pb-8 border-b border-dashed border-[var(--theme-border-color)];
+}
+
+.profile-avatar-section {
+    @apply relative mb-6 md:mb-0 flex-shrink-0 flex flex-col items-center;
+}
+
+.profile-avatar-image {
+    @apply w-32 h-32 md:w-36 md:h-36 rounded-full object-cover thick-border-light shadow-lg transition-transform duration-300;
+}
+
+.profile-avatar-change-button {
+    @apply absolute -bottom-1 -right-1 bg-[var(--theme-primary)] text-white p-3 rounded-full cursor-pointer hover:bg-[var(--theme-primary-hover)] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-110;
+    border: 2px solid var(--theme-card-bg); /* 给按钮添加一个背景色边框，使其更突出 */
+}
+.profile-avatar-change-button svg {
+    @apply w-5 h-5; /* 调整图标大小 */
+}
+
+
+.profile-user-details {
+    @apply flex-grow text-center md:text-left mt-4 md:mt-0;
+}
+
+.profile-nickname {
+    @apply text-3xl lg:text-4xl font-bold text-[var(--theme-text-primary)] mb-1;
+    font-family: var(--font-display);
+}
+
+.profile-userid {
+    @apply text-xs text-slate-500 dark:text-slate-400 mb-3;
+}
+
+.profile-tags-container {
+    @apply mt-3 flex flex-wrap justify-center md:justify-start gap-2 mb-4;
+}
+
+.profile-tag {
+    @apply inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm; /* 增加内边距和圆角 */
+}
+.status-normal {
+    @apply bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-200;
+}
+.status-banned {
+    @apply bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-200;
+}
+.role-user { /* 示例，您可以为不同角色定义不同颜色 */
+    @apply bg-blue-100 text-blue-700 dark:bg-blue-700 dark:text-blue-200;
+}
+
+.btn-edit-profile {
+    /* 从 @apply 中移除了 btn-secondary-outline */
+    @apply px-5 py-2 text-sm mt-4 md:mt-2 flex items-center;
+}
+
+
+.profile-edit-form {
+    @apply space-y-6 mt-6;
+}
+
+.form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5; /* 调整了gap */
+}
+
+.form-group {
+    @apply space-y-1; /* 给label和input之间一点空间 */
+}
+
+.form-actions {
+    @apply flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 mt-4 border-t border-dashed border-[var(--theme-border-color)];
+}
+
+
+.profile-display-section {
+    @apply space-y-5 mt-6;
+}
+
+.profile-info-item {
+    @apply flex items-start py-3 border-b border-slate-100 dark:border-slate-800;
+    /* 最后一项通常不需要下边框 */
+}
+.profile-info-item:last-child {
+    @apply border-b-0 pb-0;
+}
+
+.profile-info-label {
+    @apply w-1/3 sm:w-1/4 font-semibold text-[var(--theme-text-secondary)] flex items-center text-sm;
+}
+.profile-info-label svg {
+    @apply mr-2;
+}
+
+.profile-info-value {
+    @apply w-2/3 sm:w-3/4 text-[var(--theme-text-primary)] text-sm;
+}
+
+.icon-secondary {
+    @apply text-[var(--theme-text-secondary)];
+}

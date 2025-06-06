@@ -1,0 +1,130 @@
+/* src/app/login/login-styles.css */
+
+/* 调整登录框整体的垂直位置，减少顶部空白 */
+/* 这个可以通过调整 page.tsx 中最外层 div 的 pt-[var(--header-height)] 来实现，
+   例如改为 pt-[calc(var(--header-height)-2rem)] 或更小的值。
+   如果需要更细致的控制，可以给最外层容器加一个特定ID或类，在这里调整。
+   例如，在 page.tsx 的最外层 div 添加 id="loginPageContainer"
+*/
+#loginPageContainer {
+    /* 示例：如果想通过CSS控制，可以移除Tailwind的pt-*类，然后在这里设置 */
+    /* padding-top: calc(var(--header-height) + 1rem); */
+}
+
+/* 优化卡片容器 */
+.login-card-container {
+    @apply w-full max-w-lg bg-[var(--theme-card-bg)] rounded-2xl shadow-2xl p-6 md:p-10;
+    /* 增加一点可爱的向上浮动效果 */
+    /* transform: translateY(-10px); */
+}
+
+/* 标题样式 */
+.login-title {
+    @apply text-3xl md:text-4xl font-bold text-[var(--theme-primary)] mb-8 text-center;
+    font-family: var(--font-display);
+}
+
+/* 选项卡容器 */
+.login-tabs-container {
+    @apply flex mb-8 border-b-2 border-[var(--theme-border-color)] rounded-t-lg overflow-hidden;
+}
+
+/* 选项卡按钮通用样式 */
+.login-tab-button {
+    @apply flex-1 py-3.5 px-2 text-center font-semibold transition-all duration-300 ease-in-out
+    flex items-center justify-center space-x-2 text-sm sm:text-base
+    focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary-hover)] focus:ring-opacity-50;
+}
+
+/* 激活的选项卡样式 */
+.login-tab-button.active {
+    @apply border-b-[3px] border-[var(--theme-primary)] text-[var(--theme-primary)] bg-white shadow-inner;
+    /* box-shadow: inset 0 -3px 0 0 var(--theme-primary); */
+}
+
+/* 未激活的选项卡样式 */
+.login-tab-button.inactive {
+    @apply border-b-[3px] border-transparent text-[var(--theme-text-secondary)] hover:text-[var(--theme-primary)]
+    hover:border-[var(--theme-primary-hover)] bg-slate-50 hover:bg-slate-100;
+}
+
+
+/* 表单元素通用样式调整 */
+.login-form-input {
+    @apply block w-full px-4 py-3 text-base text-[var(--theme-text-primary)]
+    bg-white border-2 border-[var(--theme-border-color)] rounded-xl
+    shadow-sm placeholder-slate-400
+    focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary-hover)] focus:border-[var(--theme-primary-hover)]
+    transition duration-200 ease-in-out;
+    /* 卡通风格的输入框阴影 */
+    box-shadow: 2px 2px 0px var(--theme-border-strong-color);
+}
+.login-form-input:focus {
+    box-shadow: 0 0 0 3px rgba(var(--theme-primary-rgb), 0.3), 2px 2px 0px var(--theme-border-strong-color);
+}
+
+.login-form-input-with-icon {
+    @apply pl-12; /* 为左侧图标留出空间 */
+}
+.login-form-input-with-right-icon {
+    @apply pr-12; /* 为右侧图标留出空间 */
+}
+
+
+/* 输入框容器的相对定位，用于放置图标 */
+.input-icon-wrapper {
+    @apply relative;
+}
+.input-icon-left {
+    @apply absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--theme-text-secondary)] opacity-70;
+}
+.input-icon-right-button {
+    @apply absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--theme-text-secondary)] hover:text-[var(--theme-primary)] cursor-pointer;
+}
+
+
+/* 提交按钮样式 */
+.login-submit-button {
+    /* 从 @apply 中移除了 thick-border */
+    @apply w-full py-3.5 text-base font-bold text-white bg-[var(--theme-primary)] rounded-xl
+    hover:bg-[var(--theme-primary-hover)] focus:outline-none focus:ring-4
+    focus:ring-[var(--theme-primary-rgb)] focus:ring-opacity-50
+    transition-all duration-200 ease-in-out transform hover:scale-105
+    shadow-lg hover:shadow-xl border-[var(--theme-primary-hover)]; /* 保留了原有的 border 属性，如果需要的话 */
+    font-family: var(--font-display);
+}
+.login-submit-button:disabled {
+    @apply bg-slate-400 cursor-not-allowed scale-100 shadow-md;
+}
+
+/* 获取验证码按钮 */
+.captcha-button {
+    @apply btn-secondary px-4 py-3 text-sm whitespace-nowrap flex-shrink-0
+    flex items-center justify-center rounded-xl shadow-md hover:shadow-lg
+    border-2 border-[var(--theme-border-color)] hover:border-[var(--theme-primary-hover)]
+    disabled:bg-slate-300 disabled:text-slate-500 disabled:border-slate-300 disabled:cursor-not-allowed;
+    min-width: 120px; /* 确保按钮宽度一致 */
+}
+.captcha-button:disabled {
+    box-shadow: 2px 2px 0px #a0aec0; /* A lighter shadow for disabled state */
+}
+
+
+/* 错误提示 */
+.login-error-alert {
+    @apply mb-6 p-3.5 bg-red-50 border-2 border-red-400 text-red-700 rounded-xl
+    text-sm flex items-center space-x-2.5 shadow-md;
+    border-left-width: 6px; /* 左侧加粗边框强调 */
+}
+
+/* “立即注册”链接 */
+.login-register-link {
+    @apply font-bold text-[var(--theme-primary)] hover:text-[var(--theme-primary-hover)]
+    hover:underline transition-colors duration-200;
+}
+
+/* 调整整体页面容器，使其更靠近顶部 */
+.login-page-container {
+    @apply min-h-screen flex flex-col items-center justify-start bg-[var(--theme-background)] p-4;
+    padding-top: calc(var(--header-height) + 1rem); /* 调整此值以控制与header的距离 */
+}

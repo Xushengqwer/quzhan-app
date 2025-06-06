@@ -1,0 +1,134 @@
+/* src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
+
+    /* Graceful Cartoon Style Color Palette from example */
+    --theme-primary: #5A96E3; /* Gentle blue */
+    --theme-primary-hover: #4A81C2;
+    --theme-secondary: #F2C94C; /* Warm yellow as accent */
+    --theme-background: #FDFBFA; /* Very light off-white, with a bit of warmth */
+    --theme-card-bg: #FFFFFF;
+    --theme-text-primary: #3A3A3A; /* Dark gray, softer than pure black */
+    --theme-text-secondary: #757575;
+    --theme-border-color: #D1D1D1; /* Border color, lighter than text */
+    --theme-border-strong-color: #4A4A4A; /* Cartoon style thick border color */
+    --theme-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Soft shadow */
+    --theme-strong-shadow: 3px 3px 0px var(--theme-border-strong-color); /* Cartoon style hard shadow */
+    --theme-primary-rgb: 90, 150, 227; /* For box-shadow with opacity */
+
+
+    --header-height: 68px;
+    --font-display: 'ZCOOL KuaiLe', cursive;
+    --font-body: 'Noto Sans SC', sans-serif;
+}
+
+/* 新增动画类 */
+.animate-pulse-slow {
+    animation: pulse-opacity 4s infinite ease-in-out;
+}
+.animate-pulse-slower {
+    animation: pulse-opacity 5s infinite ease-in-out;
+}
+.animate-pulse-slowest {
+    animation: pulse-opacity 6s infinite ease-in-out;
+}
+
+@keyframes pulse-opacity {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.05); }
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--theme-background);
+    color: var(--theme-text-primary);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #f3e9e0;
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--theme-secondary);
+    border-radius: 20px;
+    border: 2px solid #f3e9e0;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #e6b83a;
+}
+
+/* 将自定义的全局组件类放入 @layer components */
+@layer components {
+    .thick-border {
+        border-width: 2.5px;
+        border-color: var(--theme-border-strong-color);
+        box-shadow: var(--theme-strong-shadow);
+    }
+    .thick-border-light {
+        border-width: 2px;
+        border-color: var(--theme-border-color);
+    }
+
+    /* 登录页面表单和按钮的基础样式，如果希望它们是全局可复用的组件样式 */
+    /* 如果这些只在登录页用，也可以保留在 login-styles.css 中，并移除那里的 @apply */
+    .form-label {
+        @apply block text-sm font-medium text-[var(--theme-text-secondary)] mb-1;
+    }
+    .form-input { /* 这是一个基础的 form-input，login-form-input 会在其上扩展 */
+        @apply block w-full px-3 py-2 text-base text-[var(--theme-text-primary)] bg-white border border-[var(--theme-border-color)] rounded-lg shadow-sm
+        focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary-hover)] focus:border-[var(--theme-primary-hover)]
+        transition duration-150 ease-in-out;
+    }
+    .form-select {
+        @apply block w-full pl-3 pr-10 py-2 text-base text-[var(--theme-text-primary)] bg-white border border-[var(--theme-border-color)] rounded-lg shadow-sm
+        focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary-hover)] focus:border-[var(--theme-primary-hover)]
+        transition duration-150 ease-in-out;
+    }
+    .btn-primary {
+        @apply bg-[var(--theme-primary)] hover:bg-[var(--theme-primary-hover)] text-white font-semibold py-2 px-4 rounded-lg shadow-md
+        transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--theme-primary-hover)]
+        disabled:opacity-70 disabled:cursor-not-allowed;
+    }
+    .btn-secondary {
+        @apply bg-slate-200 hover:bg-slate-300 text-[var(--theme-text-primary)] font-semibold py-2 px-4 rounded-lg shadow-md
+        transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400
+        disabled:opacity-70 disabled:cursor-not-allowed;
+    }
+    /* 新增：btn-secondary-outline 定义 */
+    .btn-secondary-outline {
+        @apply border border-[var(--theme-primary)] text-[var(--theme-primary)]
+        hover:bg-[var(--theme-primary)] hover:text-white
+        focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--theme-primary)]
+        rounded-lg shadow-sm transition-colors duration-200
+        disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+    /* ... 其他您可能在 login-styles.css 中 @apply 的全局组件类 ... */
+}
+
+.nav-icon svg, .fab-contact svg, .post-meta svg, .ai-widget-icon svg, .chat-send-icon svg, .official-tag-icon svg {
+    fill: currentColor;
+}
+.logo-text-custom {
+    font-family: var(--font-display);
+    font-size: 2rem; /* 32px */
+    line-height: 1;
+    color: var(--theme-primary);
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
