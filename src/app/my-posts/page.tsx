@@ -1,30 +1,29 @@
 // src/app/my-posts/page.tsx
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef, ChangeEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
-    PostsService,
-    OpenAPI as PostServiceOpenAPI,
-    type vo_PostResponse, // 直接使用 API 返回的帖子类型
     type enums_OfficialTag,
-    type enums_Status, // 修正：应该是 enums_Status 而非 enums_UserStatus
+    type enums_Status,
+    OpenAPI as PostServiceOpenAPI,
+    PostsService,
     type vo_BaseResponseWrapper,
-    type vo_ListUserPostPageResponseWrapper, // 导入列表响应包装器
+    type vo_ListUserPostPageResponseWrapper,
+    type vo_PostResponse,
 } from '@/generated-api/post-service';
-import { useUserStore } from '@/store/userStore';
-import { getAccessToken } from '@/utils/tokenManager';
+import {useUserStore} from '@/store/userStore';
+import {getAccessToken} from '@/utils/tokenManager';
 import withAuth from '@/components/auth/withAuth';
-import { ROLES } from '@/config/authConfig';
-import { MessageSquareText, PackageOpen, Filter, Search, RotateCcw, AlertTriangle, CheckCircle } from 'lucide-react'; // 添加图标
-import MyPostCard from './components/MyPostCard'; // MyPostCard 现在期望 vo_PostResponse
+import {ROLES} from '@/config/authConfig';
+import {AlertTriangle, CheckCircle, Filter, MessageSquareText, PackageOpen, RotateCcw, Search} from 'lucide-react';
+import MyPostCard from './components/MyPostCard';
 
 // --- 我的帖子页面组件 ---
 const MyPostsPage = () => {
     const router = useRouter();
     const token = useUserStore((state) => state.token) || getAccessToken();
 
-    // 状态现在存储的是 API 直接返回的 vo_PostResponse 类型
     const [posts, setPosts] = useState<vo_PostResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -33,14 +32,13 @@ const MyPostsPage = () => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize] = useState(5);
     const [totalPosts, setTotalPosts] = useState(0);
     const [hasMore, setHasMore] = useState(true);
 
-    // 筛选状态
     const [filterTitle, setFilterTitle] = useState<string>("");
-    const [filterOfficialTag, setFilterOfficialTag] = useState<enums_OfficialTag | "">(""); // "" 表示全部
-    const [filterStatus, setFilterStatus] = useState<enums_Status | "">(""); // "" 表示全部
+    const [filterOfficialTag, setFilterOfficialTag] = useState<enums_OfficialTag | "">("");
+    const [filterStatus, setFilterStatus] = useState<enums_Status | "">("");
 
     const [appliedFilters, setAppliedFilters] = useState<{
         title?: string;
@@ -64,9 +62,8 @@ const MyPostsPage = () => {
         console.log(`[MyPostsPage] 正在获取帖子。页码: ${pageToFetch}, 是否重置: ${reset}, 筛选条件:`, currentFilters);
         setIsLoading(true);
         setError(null);
-        // setSuccessMessage(null); // 仅在特定操作后设置成功消息
 
-        let currentPostsState: vo_PostResponse[] = []; // 用于在追加模式下计算 newTotalFetched
+        let currentPostsState: vo_PostResponse[] = [];
         if (reset) {
             setPosts([]);
             setCurrentPage(1);
@@ -85,17 +82,15 @@ const MyPostsPage = () => {
                 page: pageToFetch,
                 pageSize: pageSize,
                 title: currentFilters.title || undefined,
-                // 修正：直接使用 currentFilters 的值，因为它们已经是正确的类型 (enums_OfficialTag | undefined)
                 officialTag: currentFilters.officialTag,
                 status: currentFilters.status,
             });
 
             if (response.code === 0 && response.data) {
-                const fetchedPosts = (response.data.posts || []) as vo_PostResponse[];
+                const fetchedPosts = (response.data.posts || []);
                 setPosts(prevPosts => (pageToFetch === 1 || reset) ? fetchedPosts : [...prevPosts, ...fetchedPosts]);
                 setTotalPosts(response.data.total || 0);
 
-                // 使用 currentPostsState (重置前或追加前的 posts 状态) 来计算
                 const newTotalFetched = (pageToFetch === 1 || reset) ? fetchedPosts.length : currentPostsState.length + fetchedPosts.length;
 
                 if (newTotalFetched >= (response.data.total || 0) || fetchedPosts.length < pageSize) {
@@ -109,12 +104,13 @@ const MyPostsPage = () => {
                 setError(response.message || "加载我的帖子失败");
                 setHasMore(false);
             }
-        } catch (err: any) {
+        } catch (err: unknown) { // *** 第 1 处修复 ***
             console.error("[MyPostsPage] 获取我的帖子时发生错误:", err);
             let errorMessage = "加载帖子时发生网络错误";
-            if(err.body && err.body.message) {
-                errorMessage = err.body.message;
-            } else if (err.message) {
+            // 安全地检查 err.body 和 err.body.message
+            if (typeof err === 'object' && err !== null && 'body' in err && typeof (err as { body: unknown }).body === 'object' && (err as { body: object | null }).body !== null && 'message' in (err as { body: object }).body) {
+                errorMessage = (err as { body: { message: string } }).body.message;
+            } else if (err instanceof Error) {
                 errorMessage = err.message;
             }
             setError(errorMessage);
@@ -158,8 +154,8 @@ const MyPostsPage = () => {
         setError(null);
         setAppliedFilters({
             title: filterTitle || undefined,
-            officialTag: filterOfficialTag === "" ? undefined : filterOfficialTag as enums_OfficialTag,
-            status: filterStatus === "" ? undefined : filterStatus as enums_Status,
+            officialTag: filterOfficialTag === "" ? undefined : filterOfficialTag,
+            status: filterStatus === "" ? undefined : filterStatus,
         });
     };
 
@@ -180,13 +176,7 @@ const MyPostsPage = () => {
     const handleDeletePost = async (postId?: number) => {
         if (typeof postId === 'undefined' || isDeleting) return;
 
-        const confirmed = await new Promise<boolean>((resolve) => {
-            if (window.confirm(`确定要删除帖子ID为 ${postId} 的帖子吗？此操作不可撤销。`)) {
-                resolve(true);
-            } else {
-                resolve(false);
-            }
-        });
+        const confirmed = window.confirm(`确定要删除帖子ID为 ${postId} 的帖子吗？此操作不可撤销。`);
 
         if (!confirmed) return;
 
@@ -209,10 +199,14 @@ const MyPostsPage = () => {
             } else {
                 setError(response.message || `删除帖子 #${postId} 失败`);
             }
-        } catch (err: any) {
+        } catch (err: unknown) { // *** 第 2 处修复 ***
             let errorMessage = `删除帖子 #${postId} 时发生网络错误`;
-            if(err.body && err.body.message) errorMessage = err.body.message;
-            else if (err.message) errorMessage = err.message;
+            // 安全地检查 err.body 和 err.body.message
+            if (typeof err === 'object' && err !== null && 'body' in err && typeof (err as { body: unknown }).body === 'object' && (err as { body: object | null }).body !== null && 'message' in (err as { body: object }).body) {
+                errorMessage = (err as { body: { message: string } }).body.message;
+            } else if (err instanceof Error) {
+                errorMessage = err.message;
+            }
             setError(errorMessage);
         } finally {
             setIsDeleting(false);

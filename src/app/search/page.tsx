@@ -3,8 +3,10 @@
 
 import React, {ChangeEvent, FormEvent, useCallback, useEffect, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
-import NextImage from 'next/image'; // 明确导入并使用 NextImage
+import NextImage from 'next/image';
 import {
+    ApiError, // ** 新增：导入 ApiError 用于类型检查 **
+    // ** 移除：未使用的 models_EsPostDocument **
     type models_SearchResult,
     type models_SwaggerSearchResultResponse,
     OpenAPI as PostSearchOpenAPI,
@@ -23,7 +25,7 @@ import {
     PackageOpen,
     Search as SearchIconLucide,
     Zap
-} from 'lucide-react'; // 添加 Eye, BadgeCheck, Zap, Clock
+} from 'lucide-react';
 import Link from "next/link";
 
 // 定义帖子卡片期望的数据结构 (驼峰命名)
@@ -37,7 +39,7 @@ interface AdaptedEsPostDocumentForCard {
     officialTag?: enums_OfficialTag;
 }
 
-// --- 辅助函数 (从原 TimelinePostCard 移入) ---
+// --- 辅助函数 ---
 function formatTimeAgo(dateString?: string | null): string {
     if (!dateString) return '未知时间';
     const date = new Date(dateString);
@@ -56,7 +58,6 @@ function formatTimeAgo(dateString?: string | null): string {
     return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
-// 官方标签映射表 (从原 TimelinePostCard 移入)
 const officialTagMap: { [key in enums_OfficialTag]?: { text: string; icon: React.ReactNode; colorClass: string } } = {
     1: { text: "官方认证", icon: <BadgeCheck size={12} className="mr-1 official-tag-icon" />, colorClass: "bg-blue-100 text-blue-700" },
     2: { text: "保证金商家", icon: <Zap size={12} className="mr-1 official-tag-icon" />, colorClass: "bg-green-100 text-green-700" },
@@ -211,11 +212,14 @@ const SearchPage = () => {
                 setResults([]);
                 setTotalResults(0);
             }
-        } catch (err: any) {
+        } catch (err: unknown) { // *** 修复：将 any 改为 unknown 并进行类型检查 ***
             console.error("[SearchPage] 获取搜索结果时发生错误:", err);
             let errorMessage = "搜索时发生网络错误。";
-            if(err.body && err.body.message) errorMessage = err.body.message;
-            else if (err.message) errorMessage = err.message;
+            if (err instanceof ApiError) {
+                errorMessage = (err.body as { message?: string })?.message || err.message;
+            } else if (err instanceof Error) {
+                errorMessage = err.message;
+            }
             setError(errorMessage);
             setResults([]);
             setTotalResults(0);

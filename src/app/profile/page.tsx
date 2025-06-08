@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useCallback, ChangeEvent, FormEvent, useRef } from 'react';
 import Image from 'next/image';
 import {
+    ApiError, // ** 新增：导入 ApiError 用于类型检查 **
     ProfileManagementService,
     OpenAPI as UserHubOpenAPI,
     type vo_MyAccountDetailVO,
@@ -15,25 +16,23 @@ import {
 import { useUserStore } from '@/store/userStore';
 import { getAccessToken } from '@/utils/tokenManager';
 import withAuth from '@/components/auth/withAuth';
-import { ROLES } from '@/config/authConfig'; // 导入 ROLES
-import { User as UserIconLucide, Edit3, Save, CalendarDays, MapPin, AlertTriangle, CheckCircle, ShieldCheck, VenetianMask, Ban, Verified, RotateCcw, ImageUp, Check, UserCog } from 'lucide-react'; // Added UserCog for Admin
-import '@/app/login/login-styles.css'; // 复用登录页样式
-import './profile-styles.css'; // 引入个人资料页专属样式
+import { ROLES } from '@/config/authConfig';
+import { User as UserIconLucide, Edit3, Save, CalendarDays, MapPin, AlertTriangle, CheckCircle, ShieldCheck, VenetianMask, Ban, Verified, RotateCcw, ImageUp, Check, UserCog } from 'lucide-react';
+import '@/app/login/login-styles.css';
+import './profile-styles.css';
 
 // --- 辅助类型和映射 ---
-// 定义角色和状态的映射表，包含文本、图标和样式类
 const genderMap: { [key in enums_Gender]?: string } = { 0: '保密', 1: '男', 2: '女' };
 
 const userStatusMap: { [key in enums_UserStatus]: { text: string; icon: React.ReactNode; badgeClass: string } } = {
-    0: { text: '正常', icon: <Verified size={14} className="mr-1" />, badgeClass: 'status-normal' }, // 'status-normal' defined in profile-styles.css
-    1: { text: '已封禁', icon: <Ban size={14} className="mr-1" />, badgeClass: 'status-banned' },   // 'status-banned' defined in profile-styles.css
+    0: { text: '正常', icon: <Verified size={14} className="mr-1" />, badgeClass: 'status-normal' },
+    1: { text: '已封禁', icon: <Ban size={14} className="mr-1" />, badgeClass: 'status-banned' },
 };
 
-// 修正：直接使用数字字面量作为 userRoleMap 的键，以匹配 enums_UserRole 类型
 const userRoleMap: { [key in enums_UserRole]: { text: string; icon: React.ReactNode; badgeClass: string } } = {
-    0: { text: '管理员', icon: <UserCog size={14} className="mr-1" />, badgeClass: 'bg-purple-100 text-purple-700 dark:bg-purple-700 dark:text-purple-200' }, // 对应 ROLES.ADMIN
-    1: { text: '用户', icon: <ShieldCheck size={14} className="mr-1" />, badgeClass: 'role-user' }, // 对应 ROLES.USER
-    2: { text: '访客', icon: <VenetianMask size={14} className="mr-1" />, badgeClass: 'bg-gray-100 text-gray-700' }, // 对应 ROLES.GUEST
+    0: { text: '管理员', icon: <UserCog size={14} className="mr-1" />, badgeClass: 'bg-purple-100 text-purple-700 dark:bg-purple-700 dark:text-purple-200' },
+    1: { text: '用户', icon: <ShieldCheck size={14} className="mr-1" />, badgeClass: 'role-user' },
+    2: { text: '访客', icon: <VenetianMask size={14} className="mr-1" />, badgeClass: 'bg-gray-100 text-gray-700' },
 };
 
 
@@ -89,7 +88,7 @@ const UserProfilePage = () => {
         try {
             const response = await ProfileManagementService.getApiV1UserHubProfile();
             if (response.code === 0 && response.data) {
-                const accountDetail = response.data as vo_MyAccountDetailVO;
+                const accountDetail = response.data;
                 setProfileData(accountDetail);
                 setEditFormData({
                     nickname: accountDetail.nickname || '',
@@ -101,8 +100,13 @@ const UserProfilePage = () => {
             } else {
                 setError(response.message || "获取用户资料失败。");
             }
-        } catch (err: any) {
-            const message = (err.body as any)?.message || err.message || "获取用户资料时发生网络错误。";
+        } catch (err: unknown) { // *** 修复 1 ***
+            let message = "获取用户资料时发生网络错误。";
+            if (err instanceof ApiError) {
+                message = (err.body as { message?: string })?.message || err.message;
+            } else if (err instanceof Error) {
+                message = err.message;
+            }
             setError(message);
         } finally {
             setIsLoading(false);
@@ -165,8 +169,13 @@ const UserProfilePage = () => {
             } else {
                 setError(response.message || "头像上传失败。");
             }
-        } catch (err: any) {
-            const message = (err.body as any)?.message || err.message || "头像上传时发生网络错误。";
+        } catch (err: unknown) { // *** 修复 2 ***
+            let message = "头像上传时发生网络错误。";
+            if (err instanceof ApiError) {
+                message = (err.body as { message?: string })?.message || err.message;
+            } else if (err instanceof Error) {
+                message = err.message;
+            }
             setError(message);
         } finally {
             setIsUploadingAvatar(false);
@@ -216,14 +225,22 @@ const UserProfilePage = () => {
             } else {
                 setError(response.message || "更新用户资料失败。");
             }
-        } catch (err: any) {
-            const message = (err.body as any)?.message || err.message || "保存用户资料时发生网络错误。";
+        } catch (err: unknown) { // *** 修复 3 ***
+            let message = "保存用户资料时发生网络错误。";
+            if (err instanceof ApiError) {
+                message = (err.body as { message?: string })?.message || err.message;
+            } else if (err instanceof Error) {
+                message = err.message;
+            }
             setError(message);
         } finally {
             setIsSavingProfile(false);
         }
     };
 
+    // ** 移除了未使用的变量 **
+    // const initialCharForAvatar = (profileData?.nickname || currentUserFromStore?.nickname || '趣').charAt(0);
+    // const userIdForAvatarColor = profileData?.user_id || currentUserFromStore?.user_id || '0';
     const currentAvatarDisplay = avatarPreview || profileData?.avatar_url || defaultAvatarSrc;
 
 
