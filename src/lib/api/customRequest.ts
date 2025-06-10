@@ -14,8 +14,8 @@ const { CancelToken } = originalAxiosModule;
 import FormData from 'form-data';
 
 // 导入共享的、已配置好的 Axios 实例。
-// 注意：此处的路径错误是预期的，因为这是一个模板文件。
-import customAxiosInstance from '../../../lib/api/request';
+// **修改点**: 使用路径别名'@/'可以确保无论在模板文件位置还是生成后的文件位置，路径都能被正确解析。
+import customAxiosInstance from '@/lib/api/request';
 
 // 从与最终生成的 request.ts 同级的 core/ 目录中导入必要的类型和类。
 import { ApiError } from './ApiError';
@@ -25,7 +25,7 @@ import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
 
-// --- 辅助函数区域 ---
+// --- 辅助函数区域 (这部分无需改动) ---
 
 export const isDefined = <T>(value: T | null | undefined): value is Exclude<T, null | undefined> => {
     return value !== undefined && value !== null;
