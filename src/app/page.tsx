@@ -139,7 +139,7 @@ export default function HomePage() {
         //
         //   ★★★★★   最终修复：useCallback 的依赖项中【不能】包含它自身会修改的状态（isLoading）   ★★★★★
         //
-    }, [hasMore, token]);
+    }, [isLoading, hasMore, token]);
     //
     // =======================================================================
 
