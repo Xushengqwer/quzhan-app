@@ -13,7 +13,7 @@
     "generate-api:post-service": "openapi --input src/types/openapi-v3-post-service.json --output src/generated-api/post-service --client axios --useOptions --useUnionTypes --request ./src/lib/api/customRequest.ts",
     "generate-api:post-search": "openapi --input src/types/openapi-v3-post-search.json --output src/generated-api/post-search --client axios --useOptions --useUnionTypes --request ./src/lib/api/customRequest.ts",
     "__comment_swagger_download_note": "下面的脚本负责从各自的端口下载 swagger v2 JSON 并转换为 OpenAPI v3 JSON，保存在 src/types/ 目录下",
-    "download-and-convert-swaggers": "curl -o src/types/swagger-v2-user-hub.json http://localhost:8081/swagger/doc.json && swagger2openapi src/types/swagger-v2-user-hub.json --outfile src/types/openapi-v3-user-hub.json && curl -o src/types/swagger-v2-post-service.json http://localhost:8082/swagger/doc.json && swagger2openapi src/types/swagger-v2-post-service.json --outfile src/types/openapi-v3-post-service.json && curl -o src/types/swagger-v2-post-search.json http://localhost:8083/swagger/doc.json && swagger2openapi src/types/swagger-v2-post-search.json --outfile src/types/openapi-v3-post-search.json",
+    "download-and-convert-swaggers": "curl -o src/types/swagger-v2-user-hub.json http://localhost:8081/swagger/doc.json && swagger2openapi src/types/swagger-v2-user-hub.json --outfile src/types/openapi-v3-user-hub.json && curl -o src/types/swagger-v2-post-service.json http://localhost:8082/swagger/doc.json && swagger2openapi src/types/swagger-v2-post-service.json --outfile src/types/openapi-v3-post-service.json && swagger2openapi src/types/swagger-v2-post-search.json --outfile src/types/openapi-v3-post-search.json",
     "cleanup-temp-json": "rimraf src/types/swagger-v2-*.json src/types/openapi-v3-*.json",
     "__comment_generate_all_note": "openapi 命令在指定 --output 时，如果目录不存在，通常会自动创建它。所以 clean-generated-api 删除整个目录后，后续的 generate-api:* 会重新创建 src/generated-api 及其子目录。",
     "generate-all-apis": "npm run clean-generated-api && mkdir src\\generated-api && npm run download-and-convert-swaggers && npm run generate-api:user-hub && npm run generate-api:post-service && npm run generate-api:post-search && npm run cleanup-temp-json"
@@ -34,13 +34,15 @@
     "@types/react-dom": "^19",
     "@types/webpack": "^5.28.5",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9",
+    "eslint": "^8.57.0",
     "eslint-config-next": "15.3.2",
+    "globals": "^15.9.0",
     "openapi-typescript-codegen": "^0.29.0",
     "postcss": "^8.5.3",
     "rimraf": "^6.0.1",
     "swagger2openapi": "^7.0.8",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "^7.18.0"
   }
 }

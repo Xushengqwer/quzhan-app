@@ -14,21 +14,15 @@ const { CancelToken } = originalAxiosModule;
 import FormData from 'form-data';
 
 // 导入共享的、已配置好的 Axios 实例。
-// @ts-expect-error - 这个路径在模板文件中是无效的，但在最终生成的文件中是正确的。
+// 注意：此处的路径错误是预期的，因为这是一个模板文件。
 import customAxiosInstance from '../../../lib/api/request';
 
 // 从与最终生成的 request.ts 同级的 core/ 目录中导入必要的类型和类。
-// @ts-expect-error - 这个路径在模板文件中是无效的，但在最终生成的文件中是正确的。
 import { ApiError } from './ApiError';
-// @ts-expect-error - 这个路径在模板文件中是无效的，但在最终生成的文件中是正确的。
 import type { ApiRequestOptions } from './ApiRequestOptions';
-// @ts-expect-error - 这个路径在模板文件中是无效的，但在最终生成的文件中是正确的。
 import type { ApiResult } from './ApiResult';
-// @ts-expect-error - 这个路径在模板文件中是无效的，但在最终生成的文件中是正确的。
 import { CancelablePromise } from './CancelablePromise';
-// @ts-expect-error - 这个路径在模板文件中是无效的，但在最终生成的文件中是正确的。
 import type { OnCancel } from './CancelablePromise';
-// @ts-expect-error - 这个路径在模板文件中是无效的，但在最终生成的文件中是正确的。
 import type { OpenAPIConfig } from './OpenAPI';
 
 // --- 辅助函数区域 ---
