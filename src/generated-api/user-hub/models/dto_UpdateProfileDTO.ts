@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { enums_Gender } from './enums_Gender';
 export type dto_UpdateProfileDTO = {
     /**

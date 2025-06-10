@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { enums_OfficialTag } from './enums_OfficialTag';
 import type { vo_PostImageVO } from './vo_PostImageVO';
 export type vo_PostDetailVO = {

@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { map_string_string } from './map_string_string';
 export type response_APIResponse_map_string_string = {
     /**

@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { vo_IdentityList } from './vo_IdentityList';
 export type response_APIResponse_vo_IdentityList = {
     /**

@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 export type response_APIResponse_string = {
     /**
      * 响应状态码，0 表示成功，其他值表示错误

@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { vo_TokenPair } from './vo_TokenPair';
 export type docs_SwaggerAPITokenPairResponse = {
     /**

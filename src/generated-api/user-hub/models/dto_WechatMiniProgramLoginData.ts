@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 export type dto_WechatMiniProgramLoginData = {
     /**
      * Code 微信小程序通过 wx.login() 获取的临时授权码

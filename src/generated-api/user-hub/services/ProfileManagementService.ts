@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { docs_SwaggerAPIMyAccountDetailResponse } from '../models/docs_SwaggerAPIMyAccountDetailResponse';
 import type { docs_SwaggerAPIProfileVOResponse } from '../models/docs_SwaggerAPIProfileVOResponse';
 import type { dto_UpdateProfileDTO } from '../models/dto_UpdateProfileDTO';

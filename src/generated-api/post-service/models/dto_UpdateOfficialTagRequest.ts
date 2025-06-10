@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 export type dto_UpdateOfficialTagRequest = {
     /**
      * 新的官方标签值，必填，并限制范围 (假设最大值为 3)

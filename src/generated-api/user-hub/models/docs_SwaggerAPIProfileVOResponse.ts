@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { vo_ProfileVO } from './vo_ProfileVO';
 export type docs_SwaggerAPIProfileVOResponse = {
     /**

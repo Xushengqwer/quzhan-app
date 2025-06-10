@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { enums_UserRole } from './enums_UserRole';
 import type { enums_UserStatus } from './enums_UserStatus';
 export type vo_UserVO = {

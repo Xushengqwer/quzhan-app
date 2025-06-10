@@ -28,6 +28,16 @@
     --font-body: 'Noto Sans SC', sans-serif;
 }
 
+.search-highlight mark {
+    background-color: var(--theme-secondary);
+    color: var(--theme-text-primary);
+    padding: 0.1em 0.2em;
+    border-radius: 3px;
+    font-style: normal;
+    font-weight: 600;
+}
+
+
 /* 新增动画类 */
 .animate-pulse-slow {
     animation: pulse-opacity 4s infinite ease-in-out;

@@ -20,17 +20,15 @@ import { getAccessToken, setAccessToken as storeNewAccessToken } from '@/utils/t
 import { useUserStore } from '@/store/userStore';
 import { LOGIN_REDIRECT_PATH } from '@/config/authConfig';
 
-// *** 新增：为后端错误响应定义一个通用接口 ***
+// *** 为后端错误响应定义一个通用接口 ***
 interface ApiErrorPayload {
     message?: string;
     code?: number;
-    // data 字段可以是任何类型，所以这里使用 unknown
     data?: unknown;
 }
 
 /**
  * API 网关的统一基础 URL。
- * 从环境变量 `NEXT_PUBLIC_GATEWAY_HOST_AND_PORT` 读取，如果未设置则使用默认值。
  */
 const AXIOS_INSTANCE_DEFAULT_BASE_URL: string = process.env.NEXT_PUBLIC_GATEWAY_HOST_AND_PORT || 'http://localhost:8080';
 
@@ -39,16 +37,15 @@ const AXIOS_INSTANCE_DEFAULT_BASE_URL: string = process.env.NEXT_PUBLIC_GATEWAY_
  */
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: AXIOS_INSTANCE_DEFAULT_BASE_URL,
-    timeout: 10000, // 10 秒
-    withCredentials: true, // 对于发送/接收 cookie (如 http-only 刷新令牌) 至关重要
+    timeout: 10000,
+    withCredentials: true,
 });
 
 // --- 请求拦截器 ---
 axiosInstance.interceptors.request.use(
-    (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig> => {
-        if (process.env.NODE_ENV === 'development') {
-            // console.log(`[Axios 请求拦截器] 发送请求: ${config.method?.toUpperCase()} ${config.url}`);
-        }
+    (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+        // 开发时可取消注释进行调试
+        // console.log(`[Axios 请求拦截器] 发送请求: ${config.method?.toUpperCase()} ${config.url}`);
         return config;
     },
     (error: AxiosError): Promise<AxiosError> => {
@@ -74,9 +71,6 @@ const onTokenRefreshed = (newAccessToken: string | null) => {
 
 axiosInstance.interceptors.response.use(
     (response: AxiosResponse): AxiosResponse => {
-        if (process.env.NODE_ENV === 'development') {
-            // console.log(`[Axios 响应拦截器] 收到响应: ${response.status} 来自 ${response.config.url}`);
-        }
         return response;
     },
     async (error: AxiosError): Promise<AxiosError | AxiosResponse> => {
@@ -89,7 +83,6 @@ axiosInstance.interceptors.response.use(
             console.error('[Axios 响应拦截器] 错误响应数据:', JSON.stringify(error.response.data, null, 2));
         }
 
-        // *** 修复：为 apiErrorData 的 data 属性使用 unknown 类型 ***
         let apiErrorData: {
             status?: number;
             message: string;
@@ -104,7 +97,6 @@ axiosInstance.interceptors.response.use(
         };
 
         if (error.response) {
-            // *** 修复：使用我们定义的 ApiErrorPayload 接口进行类型断言 ***
             const responseData = error.response.data as ApiErrorPayload;
             apiErrorData = {
                 ...apiErrorData,
@@ -115,18 +107,23 @@ axiosInstance.interceptors.response.use(
                 code: responseData?.code,
             };
         } else if (error.request) {
-            apiErrorData = {
-                ...apiErrorData,
-                message: '服务器无响应或网络连接问题。请稍后再试。',
-                url: originalRequest?.url,
-                status: -1,
-            };
+            apiErrorData.message = '服务器无响应或网络连接问题。请稍后再试。';
+            apiErrorData.url = originalRequest?.url;
+            apiErrorData.status = -1;
         } else {
-            apiErrorData = {
-                ...apiErrorData,
-                message: error.message || '设置请求时发生错误。',
-                status: -2,
-            };
+            apiErrorData.message = error.message || '设置请求时发生错误。';
+            apiErrorData.status = -2;
+        }
+
+        //   ★★★★★   新增的核心逻辑：处理 40101 错误码   ★★★★★
+        if (apiErrorData.code === 40101) {
+            console.log('[Axios 响应拦截器] 收到缺少或不正确的令牌错误 (业务代码 40101)。正在清除会话并重定向到登录页。');
+            useUserStore.getState().clearUserSession();
+            if (typeof window !== 'undefined') {
+                window.location.href = LOGIN_REDIRECT_PATH;
+            }
+            // 返回一个被拒绝的 Promise 来中断后续的错误处理
+            return Promise.reject(apiErrorData);
         }
 
         if (apiErrorData.code === 40102 && originalRequest) {
@@ -140,7 +137,7 @@ axiosInstance.interceptors.response.use(
 
                     if (refreshData.code === 0 && refreshData.data?.access_token) {
                         const newAccessToken = refreshData.data.access_token;
-                        console.log('[Axios 响应拦截器] 令牌刷新成功。已获取新的访问令牌。');
+                        console.log('[Axios 响应拦截器] 令牌刷新成功。');
 
                         storeNewAccessToken(newAccessToken);
                         const currentUser = useUserStore.getState().user;
@@ -153,7 +150,6 @@ axiosInstance.interceptors.response.use(
                         onTokenRefreshed(newAccessToken);
                         isCurrentlyRefreshingToken = false;
 
-                        console.log('[Axios 响应拦截器] 使用新令牌重试原始请求:', originalRequest.url);
                         return axiosInstance(originalRequest);
                     } else {
                         console.error('[Axios 响应拦截器] 令牌刷新尝试失败，业务代码:', refreshData.code, '消息:', refreshData.message);
@@ -173,12 +169,11 @@ axiosInstance.interceptors.response.use(
                             status: refreshData.code === 40103 ? 401 : (apiErrorData.status || 500),
                         });
                     }
-                } catch (refreshErr: unknown) { // *** 修复：将 any 修改为 unknown ***
+                } catch (refreshErr: unknown) {
                     console.error('[Axios 响应拦截器] 令牌刷新 API 调用期间发生严重错误:', refreshErr);
                     isCurrentlyRefreshingToken = false;
                     onTokenRefreshed(null);
 
-                    // *** 修复：安全地访问 refreshErr 的属性 ***
                     const refreshErrorResponse = (refreshErr as AxiosError)?.response?.data as ApiErrorPayload | undefined;
                     const refreshErrorStatus = (refreshErr as AxiosError)?.response?.status;
                     const refreshErrorMessage = refreshErr instanceof Error ? refreshErr.message : '刷新 API 调用期间网络错误';
@@ -204,10 +199,8 @@ axiosInstance.interceptors.response.use(
                     addTokenRefreshSubscriber((newAccessToken: string | null) => {
                         if (newAccessToken && originalRequest.headers) {
                             originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                            console.log('[Axios 响应拦截器] 使用新令牌重试已排队的请求:', originalRequest.url);
                             resolve(axiosInstance(originalRequest));
                         } else {
-                            console.log('[Axios 响应拦截器] 令牌刷新失败，拒绝已排队的请求:', originalRequest.url);
                             reject(apiErrorData);
                         }
                     });
@@ -233,7 +226,6 @@ export function initializeApiClient(): void {
         'X-Platform': 'web',
     };
 
-    // *** 修复：为 config 定义一个更具体的类型 ***
     type ApiConfig = UserHubConfig | PostServiceConfig | PostSearchConfig;
 
     const allApiConfigs: { name: string; config: ApiConfig }[] = [

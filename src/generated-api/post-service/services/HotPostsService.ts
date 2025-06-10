@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { vo_ListPostsByCursorResponseWrapper } from '../models/vo_ListPostsByCursorResponseWrapper';
 import type { vo_PostDetailResponseWrapper } from '../models/vo_PostDetailResponseWrapper';
 import type { CancelablePromise } from '../core/CancelablePromise';

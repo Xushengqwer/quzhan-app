@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { docs_SwaggerAPIEmptyResponse } from '../models/docs_SwaggerAPIEmptyResponse';
 import type { dto_SendCaptchaRequest } from '../models/dto_SendCaptchaRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';

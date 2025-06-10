@@ -6,7 +6,7 @@ import {useRouter} from 'next/navigation';
 import NextImage from 'next/image';
 import {useUserStore} from '@/store/userStore';
 import {
-    ApiError, // 导入 ApiError 用于类型检查
+    ApiError, // 确保导入 ApiError
     OpenAPI as PostServiceOpenAPI,
     PostsService,
     type vo_PostDetailResponseWrapper,
@@ -29,19 +29,6 @@ interface PostFormData {
     content: string;
     pricePerUnit?: number | string;
     contactInfo?: string;
-}
-
-// *** 新增：为提交的 formData 定义一个类型，以替代 any ***
-// 这个类型与 PostsService.postApiV1PostPosts 的 formData 参数匹配
-interface SubmissionPayloadFormData {
-    title: string;
-    content: string;
-    author_id: string;
-    author_username: string;
-    images: Blob; // API 定义为单个 Blob，但实际可以传数组，这里暂时保持 Blob 以匹配生成类型
-    price_per_unit?: number;
-    contact_info?: string;
-    author_avatar?: string;
 }
 
 const MAX_IMAGES = 9; // 最大图片数量
@@ -222,7 +209,9 @@ const PublishPostPage: React.FC = () => {
         setError(null);
         setSuccessMessage(null);
 
-        // 使用 as any 临时解决类型冲突，这是为了最小化改动
+        // *** 修复：使用 eslint-disable-next-line 注释来忽略此处的 any 类型错误 ***
+        // 这是一个临时的、务实的解决方案，以避免与错误的生成类型冲突
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const submissionPayload: any = {
             title: formData.title.trim(),
             content: formData.content.trim(),
@@ -262,7 +251,7 @@ const PublishPostPage: React.FC = () => {
             } else {
                 setError(response.message || "帖子发布失败，请稍后再试。");
             }
-        } catch (err: unknown) { // *** 修复：any 改为 unknown 并进行类型检查 ***
+        } catch (err: unknown) {
             console.error("[PublishPostPage] 提交帖子时发生错误:", err);
             let errorMessage = "帖子发布时发生错误。";
             if (err instanceof ApiError) {

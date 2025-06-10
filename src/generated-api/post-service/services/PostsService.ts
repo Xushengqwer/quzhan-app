@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { vo_BaseResponseWrapper } from '../models/vo_BaseResponseWrapper';
 import type { vo_ListPostsByCursorResponseWrapper } from '../models/vo_ListPostsByCursorResponseWrapper';
 import type { vo_ListUserPostPageResponseWrapper } from '../models/vo_ListUserPostPageResponseWrapper';

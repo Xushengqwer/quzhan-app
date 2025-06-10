@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { dto_CreateIdentityDTO } from '../models/dto_CreateIdentityDTO';
 import type { dto_UpdateIdentityDTO } from '../models/dto_UpdateIdentityDTO';
 import type { response_APIResponse_vo_Empty } from '../models/response_APIResponse_vo_Empty';

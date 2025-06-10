@@ -1,12 +1,38 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
+import type { models_SwaggerHotSearchTermsResponse } from '../models/models_SwaggerHotSearchTermsResponse';
 import type { models_SwaggerSearchResultResponse } from '../models/models_SwaggerSearchResultResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class SearchService {
+    /**
+     * 获取热门搜索词
+     * 返回最流行或最近搜索词的列表。
+     * @returns models_SwaggerHotSearchTermsResponse 成功，返回热门搜索词列表。
+     * @throws ApiError
+     */
+    public static getApiV1SearchHotTerms({
+        limit = 10,
+    }: {
+        /**
+         * 返回的热门搜索词数量
+         */
+        limit?: number,
+    }): CancelablePromise<models_SwaggerHotSearchTermsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/search/hot-terms',
+            query: {
+                'limit': limit,
+            },
+            errors: {
+                500: `服务器内部错误，无法获取热门搜索词。`,
+            },
+        });
+    }
     /**
      * 搜索帖子
      * 根据关键词、分页、排序等条件搜索帖子列表

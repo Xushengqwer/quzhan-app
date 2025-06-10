@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 export type dto_UpdateUserDTO = {
     /**
      * 用户状态（0=Active, 1=Blacklisted），可选

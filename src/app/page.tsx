@@ -3,8 +3,9 @@
 
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Link from 'next/link';
-import NextImage from 'next/image'; // 导入 Next.js Image 组件并重命名
+import NextImage from 'next/image';
 import {
+    ApiError,
     type enums_OfficialTag,
     HotPostsService,
     OpenAPI as PostServiceOpenAPI,
@@ -24,15 +25,12 @@ import {
     Sparkles,
     Sun,
     TrendingUp
-} from 'lucide-react'; // 确保 Clock 已导入
+} from 'lucide-react';
 
-// --- 类型定义 ---
-// HomePagePostData 扩展了 API 返回的帖子类型，并添加了格式化后的创建时间
 interface HomePagePostData extends vo_PostResponse {
     formattedCreatedAt?: string;
 }
 
-// --- 辅助函数 ---
 function formatTimeAgo(dateString?: string): string {
     if (!dateString) return '未知时间';
     const date = new Date(dateString);
@@ -51,14 +49,12 @@ function formatTimeAgo(dateString?: string): string {
     return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
-// 使用导入的 enums_OfficialTag 作为键类型，增强类型安全
 const officialTagMap: { [key in enums_OfficialTag]?: { text: string; icon?: React.ReactNode; colorClass: string } } = {
     1: { text: "官方认证", icon: <BadgeCheck size={12} className="mr-1 official-tag-icon" />, colorClass: "bg-[var(--theme-secondary)] text-[var(--theme-text-primary)]" },
     2: { text: "编辑推荐", icon: <Sparkles size={12} className="mr-1 official-tag-icon" />, colorClass: "bg-blue-100 text-blue-700 dark:bg-blue-700 dark:text-blue-200" },
     3: { text: "急速响应", icon: <Clock size={12} className="mr-1 official-tag-icon" />, colorClass: "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-orange-200" },
 };
 
-// --- 装饰性形状组件 ---
 const DecorativeShapes = () => (
     <div className="absolute top-0 left-0 w-full h-36 md:h-48 overflow-hidden -z-10 opacity-50">
         <svg width="100%" height="100%" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -83,7 +79,6 @@ const DecorativeShapes = () => (
     </div>
 );
 
-// --- 主页组件 ---
 export default function HomePage() {
     const [posts, setPosts] = useState<HomePagePostData[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -97,21 +92,16 @@ export default function HomePage() {
     useEffect(() => {
         if (token && PostServiceOpenAPI.TOKEN !== token) {
             PostServiceOpenAPI.TOKEN = token;
-            console.log("[HomePage] 已同步 PostServiceOpenAPI.TOKEN");
         }
     }, [token]);
 
     const fetchHotPosts = useCallback(async (cursor?: number) => {
         if (isLoading || !hasMore) return;
-        console.log("HomePage: 正在加载热门帖子，光标:", cursor);
+
         setIsLoading(true);
         setError(null);
 
         try {
-            if (token && PostServiceOpenAPI.TOKEN !== token) {
-                PostServiceOpenAPI.TOKEN = token;
-            }
-
             const response: vo_ListPostsByCursorResponseWrapper = await HotPostsService.getApiV1PostHotPosts({
                 limit: 6,
                 lastPostId: cursor,
@@ -129,45 +119,42 @@ export default function HomePage() {
                 setPosts(prevPosts => cursor ? [...prevPosts, ...displayPosts] : displayPosts);
                 setNextCursor(response.data.next_cursor ?? undefined);
                 setHasMore(!!response.data.next_cursor);
-
-                if (!response.data.next_cursor) {
-                    console.log("HomePage: 没有更多热门帖子可加载。");
-                }
             } else {
-                console.error("HomePage: 获取热门帖子失败或无数据", response.message);
                 setError(response.message || "加载热门帖子失败");
                 setHasMore(false);
             }
-        } catch (err: any) {
-            console.error("HomePage: 获取热门帖子时发生错误:", err);
+        } catch (err: unknown) {
             let errorMessage = "加载热门帖子时发生网络错误";
-            if (err && typeof err === 'object' && 'body' in err && err.body && typeof err.body.message === 'string') {
-                errorMessage = err.body.message;
-            } else if (err && typeof err === 'object' && 'message' in err) {
-                errorMessage = (err as Error).message || errorMessage;
+            if (err instanceof ApiError) {
+                errorMessage = (err.body as { message?: string })?.message || err.message;
+            } else if (err instanceof Error) {
+                errorMessage = err.message;
             }
             setError(errorMessage);
             setHasMore(false);
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading, hasMore, token]);
+        // =======================================================================
+        //
+        //   ★★★★★   最终修复：useCallback 的依赖项中【不能】包含它自身会修改的状态（isLoading）   ★★★★★
+        //
+    }, [hasMore, token]);
+    //
+    // =======================================================================
+
 
     useEffect(() => {
-        setPosts([]);
-        setNextCursor(undefined);
-        setHasMore(true);
+        // 这个 useEffect 负责在组件首次加载时获取数据
         fetchHotPosts(undefined);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [fetchHotPosts]); // 仅在 fetchHotPosts 函数本身变化时（即 token 变化时）重新执行
 
     useEffect(() => {
         if (!hasMore || isLoading) return;
 
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0]?.isIntersecting && hasMore && !isLoading) {
-                    console.log("HomePage: 哨兵元素可见，加载下一页，光标:", nextCursor)
+                if (entries[0]?.isIntersecting && !isLoading) {
                     fetchHotPosts(nextCursor);
                 }
             },
@@ -185,7 +172,6 @@ export default function HomePage() {
             }
         };
     }, [isLoading, hasMore, nextCursor, fetchHotPosts]);
-
 
     return (
         <div className="bg-[var(--theme-background)] relative">
@@ -240,7 +226,6 @@ export default function HomePage() {
                                                 </span>
                                             </div>
                                         </div>
-                                        {/* 修正：移除多余的 post.official_tag !== 0 条件 */}
                                         {post.official_tag && officialTagMap[post.official_tag] && (
                                             <span className={`inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm ${officialTagMap[post.official_tag]!.colorClass}`}>
                                                 {officialTagMap[post.official_tag]!.icon}

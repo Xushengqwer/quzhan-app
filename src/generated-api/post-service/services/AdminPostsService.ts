@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { dto_AuditPostRequest } from '../models/dto_AuditPostRequest';
 import type { dto_UpdateOfficialTagRequest } from '../models/dto_UpdateOfficialTagRequest';
 import type { vo_BaseResponseWrapper } from '../models/vo_BaseResponseWrapper';

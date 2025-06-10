@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { vo_MyAccountDetailVO } from './vo_MyAccountDetailVO';
 export type docs_SwaggerAPIMyAccountDetailResponse = {
     /**

@@ -1,8 +1,9 @@
 // src/config/authConfig.ts
-import type {enums_UserRole} from '@/generated-api'; // [cite: uploaded:doer_hub/src/generated-api/models/enums_UserRole.ts]
+// *** 修复：修正了导入路径 ***
+import type { enums_UserRole } from '@/generated-api/user-hub';
 
 // 定义角色常量，使其更具可读性
-// 值应与您的 enums_UserRole.ts 中的定义匹配 (0=Admin, 1=User, 2=Guest) [cite: uploaded:doer_hub/src/generated-api/models/enums_UserRole.ts]
+// 值应与您的 enums_UserRole.ts 中的定义匹配 (0=Admin, 1=User, 2=Guest)
 export const ROLES = {
     ADMIN: 0 as enums_UserRole,
     USER: 1 as enums_UserRole,
@@ -18,8 +19,6 @@ export const ROUTE_PERMISSIONS: Record<string, enums_UserRole[]> = {
     '/profile': [ROLES.ADMIN, ROLES.USER], // 个人资料页，管理员和普通用户都可以访问
     '/posts/create': [ROLES.ADMIN, ROLES.USER], // 创建帖子页面
     // ... 您可以根据需要添加更多路由和对应的权限
-    // 例如：
-    // '/settings': [ROLES.USER], // 只有普通用户能访问的设置页 (管理员可能通过其他方式访问)
 };
 
 // 定义重定向路径

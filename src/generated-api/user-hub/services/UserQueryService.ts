@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { docs_SwaggerAPIUserListResponse } from '../models/docs_SwaggerAPIUserListResponse';
 import type { dto_UserQueryDTO } from '../models/dto_UserQueryDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';

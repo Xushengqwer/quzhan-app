@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { models_EsPostDocument } from './models_EsPostDocument';
 export type models_SearchResult = {
     /**

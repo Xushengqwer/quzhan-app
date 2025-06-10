@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 import type { docs_SwaggerAPIEmptyResponse } from '../models/docs_SwaggerAPIEmptyResponse';
 import type { docs_SwaggerAPITokenPairResponse } from '../models/docs_SwaggerAPITokenPairResponse';
 import type { dto_RefreshTokenRequest } from '../models/dto_RefreshTokenRequest';
