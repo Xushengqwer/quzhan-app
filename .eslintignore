@@ -1,0 +1,7 @@
+# 忽略所有自动生成的 API 客户端代码
+src/generated-api/
+
+# 忽略配置文件
+next.config.ts
+postcss.config.js
+tailwind.config.js
